@@ -93,6 +93,9 @@ def main(sysargs=sys.argv[:]):
                 cleanup()
                 return 0
 
+        # Pause to allow the shipper to send before exiting.
+        time.sleep(cfg['sleep_interval'] * 200)
+
         return 0
     except (KeyboardInterrupt, OSError, IOError) as exc:
         _debug({'msg': 'caught exception', 'exc': str(exc)})
@@ -293,6 +296,9 @@ def _input_lines(sleep_interval=0.1):
         line = sys.stdin.readline()
         if hasattr(line, 'decode'):
             line = line.decode('UTF-8')
+
+        if line == '':
+            raise StopIteration
 
         stripped = line.strip()
         if not stripped:
